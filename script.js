@@ -1,3 +1,7 @@
+const playerFactory = (num, name, marker, moves, winner) => {
+  return { num, name, marker, moves, winner };
+};
+
 const gameBoard = (() => {
   //declare rules, create players and set starting points
   const winningAxes = [
@@ -11,33 +15,45 @@ const gameBoard = (() => {
     [2, 4, 6],
   ];
 
-  const playerOne = createPlayers(1, "Player 1", "X", []);
-  const playerTwo = createPlayers(2, "Player 2", "O", []);
-
-  let activePlayer = playerOne;
+  let playerOne = "";
+  let playerTwo = "";
+  let activePlayer = "";
   let rounds = 0;
 
   //game functions
-  function createPlayers(num, name, marker, moves, winner) {
-    return { num, name, marker, moves, winner };
+  function playRound(e, targetCell) {
+    targetCell.innerHTML = activePlayer.marker;
+    activePlayer.moves.push(Number(e.target.id));
+
+    rounds = rounds + 1;
+    console.log(rounds);
+    winnerCheck();
+
+    rounds === 9 ? console.log("DRAW") : false;
+    activePlayer.winner === true
+      ? console.log(activePlayer.name + " WON!")
+      : switchPlayers();
   }
 
+  const createPlayer = (name) => {
+    playerOne = playerFactory(1, name, "X", []);
+    playerTwo = playerFactory(2, "Volan de Mort", "O", []);
+    activePlayer = playerOne;
+  };
+
   function switchPlayers() {
-    this.activePlayer === playerOne
-      ? (this.activePlayer = playerTwo)
-      : (this.activePlayer = playerOne);
-    activePlayer = this.activePlayer;
+    activePlayer === playerOne
+      ? (activePlayer = playerTwo)
+      : (activePlayer = playerOne);
     return { activePlayer };
   }
 
   function winnerCheck() {
     for (let i = 1; i < winningAxes.length; i++) {
       if (
-        winningAxes[i].every((element) =>
-          this.activePlayer.moves.includes(element)
-        )
+        winningAxes[i].every((element) => activePlayer.moves.includes(element))
       ) {
-        this.activePlayer.winner = true;
+        activePlayer.winner = true;
         console.log(activePlayer.winner);
         return { activePlayer };
       }
@@ -53,6 +69,8 @@ const gameBoard = (() => {
     rounds,
     switchPlayers,
     winnerCheck,
+    createPlayer,
+    playRound,
   };
 })();
 
@@ -66,24 +84,13 @@ const displayController = (() => {
       "click",
       (e) => {
         let targetCell = document.getElementById(e.target.id);
-
-        targetCell.innerHTML = gameBoard.activePlayer.marker;
-        gameBoard.activePlayer.moves.push(Number(e.target.id));
-
-        gameBoard.rounds = gameBoard.rounds + 1;
-        console.log(gameBoard.rounds);
-        gameBoard.winnerCheck();
-
-        gameBoard.rounds === 9 ? console.log("DRAW") : false;
-        gameBoard.activePlayer.winner === true
-          ? console.log(gameBoard.activePlayer.name + " WON!")
-          : gameBoard.switchPlayers();
+        gameBoard.playRound(e, targetCell);
       },
       { once: true }
     );
   });
 
-  // startBtn.addEventListener("click", () => {
-  //   gameBoard.getNames();
-  // });
+  startBtn.addEventListener("click", () => {
+    gameBoard.createPlayer("Harry Potter");
+  });
 })();
