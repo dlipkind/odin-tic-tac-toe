@@ -15,7 +15,7 @@ const gameBoard = (() => {
   const playerTwo = createPlayers(2, "Player 2", "O", []);
 
   let activePlayer = playerOne;
-  let rounds = 1;
+  let rounds = 0;
 
   //game functions
   function createPlayers(num, name, marker, moves, winner) {
@@ -44,12 +44,6 @@ const gameBoard = (() => {
     }
   }
 
-  function roundCount() {
-    this.rounds = rounds++;
-    console.log(rounds - 1);
-    return rounds;
-  }
-
   console.log(activePlayer);
 
   return {
@@ -58,7 +52,6 @@ const gameBoard = (() => {
     activePlayer,
     rounds,
     switchPlayers,
-    roundCount,
     winnerCheck,
   };
 })();
@@ -77,7 +70,8 @@ const displayController = (() => {
         targetCell.innerHTML = gameBoard.activePlayer.marker;
         gameBoard.activePlayer.moves.push(Number(e.target.id));
 
-        gameBoard.roundCount();
+        gameBoard.rounds = gameBoard.rounds + 1;
+        console.log(gameBoard.rounds);
         gameBoard.winnerCheck();
 
         gameBoard.rounds === 9 ? console.log("DRAW") : false;
@@ -88,4 +82,8 @@ const displayController = (() => {
       { once: true }
     );
   });
+
+  // startBtn.addEventListener("click", () => {
+  //   gameBoard.getNames();
+  // });
 })();
