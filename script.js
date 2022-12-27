@@ -1,28 +1,4 @@
-const gameModule = (() => {
-  document.querySelectorAll(".cell").forEach((occurence) => {
-    occurence.addEventListener(
-      "click",
-      (e) => {
-        let activePlayer = playModule.activePlayer;
-        let targetCell = document.getElementById(e.target.id);
-
-        targetCell.innerHTML = activePlayer.marker;
-        activePlayer.moves.push(Number(e.target.id));
-
-        playModule.roundCount();
-        playModule.winnerCheck();
-
-        playModule.rounds === 9 ? console.log("DRAW") : false;
-        activePlayer.winner === true
-          ? console.log(activePlayer.name + " WON!")
-          : playModule.switchPlayers();
-      },
-      { once: true }
-    );
-  });
-})();
-
-const playModule = (() => {
+const gameBoard = (() => {
   //declare rules, create players and set starting points
   const winningAxes = [
     [0, 1, 2],
@@ -85,4 +61,31 @@ const playModule = (() => {
     roundCount,
     winnerCheck,
   };
+})();
+
+const displayController = (() => {
+  const startBtn = document.querySelector(".start-button");
+  const gridCells = document.querySelectorAll(".cell");
+
+  //event listener for the grid
+  gridCells.forEach((occurence) => {
+    occurence.addEventListener(
+      "click",
+      (e) => {
+        let targetCell = document.getElementById(e.target.id);
+
+        targetCell.innerHTML = gameBoard.activePlayer.marker;
+        gameBoard.activePlayer.moves.push(Number(e.target.id));
+
+        gameBoard.roundCount();
+        gameBoard.winnerCheck();
+
+        gameBoard.rounds === 9 ? console.log("DRAW") : false;
+        gameBoard.activePlayer.winner === true
+          ? console.log(gameBoard.activePlayer.name + " WON!")
+          : gameBoard.switchPlayers();
+      },
+      { once: true }
+    );
+  });
 })();
